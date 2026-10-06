@@ -1,0 +1,103 @@
+/* ===== RECETAS FATOB - estilos generales =====
+   Paleta: vino, durazno y beige */
+@import url('https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@1,700&family=Lora:wght@400;600&display=swap');
+
+:root {
+    --vino: #722b33;
+    --vino-osc: #561e25;
+    --durazno: #ffddcf;
+    --beige: #dcc5ab;
+    --beige-osc: #c4a785;
+    --taupe: #a99b80;
+    --texto: #2b1b1b;
+}
+* { box-sizing: border-box; }
+html { overscroll-behavior: none; }
+body { margin: 0; font-family: 'Lora', Georgia, serif; color: var(--texto); background: var(--durazno); line-height: 1.55;
+       min-height: 100vh; display: flex; flex-direction: column; }
+a { color: var(--vino); }
+h1, h2, h3 { font-family: 'Lobster Two', 'Georgia', cursive; font-style: italic; color: var(--vino); }
+h2 { text-align: center; font-size: 2rem; margin: 10px 0 18px; }
+.container { width: 100%; max-width: 1000px; margin: 0 auto; padding: 24px 20px 40px; flex: 1; }
+
+/* ----- Navbar ----- */
+.navbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; background: var(--vino); padding: 12px 24px; }
+.navbar a { color: var(--durazno); text-decoration: none; }
+.navbar .brand { font-family: 'Lobster Two', cursive; font-style: italic; font-size: 1.5rem; margin-right: 10px; }
+.nav-links { display: flex; flex-wrap: wrap; gap: 16px; list-style: none; margin: 0; padding: 0; flex: 1; }
+.nav-links a:hover { text-decoration: underline; }
+.buscador { display: flex; gap: 6px; }
+.buscador input { padding: 6px 14px; border: none; border-radius: 20px; background: var(--durazno); font-family: inherit; }
+.buscador button { padding: 6px 14px; border: none; border-radius: 20px; background: var(--beige); color: var(--vino-osc); cursor: pointer; font-family: inherit; }
+
+/* ----- Tarjetas de receta ----- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; }
+.card { background: var(--beige); border-radius: 14px; padding: 12px; text-align: center; box-shadow: 0 2px 6px rgba(86, 30, 37, .2); }
+.card img, .sin-imagen { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; display: block; }
+.sin-imagen { display: flex; align-items: center; justify-content: center; font-size: 3rem; background: var(--taupe); }
+.card-body { padding: 10px 4px 4px; }
+.card h3 { margin: 4px 0; font-size: 1.3rem; }
+.card h3 a { text-decoration: none; }
+.meta { color: #6b4a4a; font-size: .9rem; margin: 0 0 6px; }
+.stars { color: var(--vino); letter-spacing: 1px; }
+.ver-mas { display: inline-block; margin-top: 6px; padding: 4px 18px; border-radius: 20px; background: var(--beige-osc); color: var(--vino-osc); text-decoration: none; }
+.ver-mas:hover { background: var(--vino); color: var(--durazno); }
+
+/* ----- Portada ----- */
+.hero { background: var(--vino); color: var(--durazno); padding: 34px 20px; border-radius: 16px; text-align: center; margin-bottom: 28px; }
+.hero h1 { color: var(--durazno); font-size: 2.4rem; margin: 0 0 6px; }
+.hero p { margin: 0 0 16px; }
+.hero .boton { background: var(--beige); color: var(--vino-osc); }
+
+/* ----- Formularios (receta, comentarios, perfil) ----- */
+.formulario, form:has(.form-group) { display: flex; flex-direction: column; gap: 10px; background: var(--beige); padding: 24px 28px; border-radius: 18px; max-width: 560px; margin: 0 auto; }
+.formulario label, .form-group label { font-weight: 600; color: var(--vino-osc); }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.formulario input, .formulario textarea, .form-group input[type=text], .form-group input[type=email], .form-group input[type=password], select {
+    padding: 9px 12px; border: none; border-radius: 10px; background: #fff; font: inherit; width: 100%; }
+.formulario input[type=checkbox], .form-group input[type=checkbox] { width: auto; }
+.formulario .check, .form-group .check { display: flex; align-items: center; gap: 8px; font-weight: 400; color: var(--texto); }
+.formulario input[type=file] { background: transparent; padding-left: 0; }
+
+/* ----- Botones ----- */
+button, .boton, .btn { background: var(--beige-osc); color: var(--vino-osc); border: none; padding: 9px 22px; border-radius: 22px; cursor: pointer; text-decoration: none; display: inline-block; font: inherit; font-weight: 600; text-align: center; }
+button:hover, .boton:hover, .btn:hover { background: var(--vino); color: var(--durazno); }
+button.peligro { background: #9b2c2c; color: #fff; }
+button.chico { padding: 3px 12px; font-size: .85rem; }
+.inline { display: flex; gap: 8px; flex-wrap: wrap; }
+.inline select { width: auto; }
+.acciones { display: flex; gap: 10px; margin: 12px 0; align-items: center; flex-wrap: wrap; }
+.mini { max-width: 140px; border-radius: 8px; }
+
+/* ----- Detalle de receta ----- */
+.detalle { background: var(--beige); border-radius: 18px; margin-top: 20px; }
+.detalle h3 { background: var(--vino); color: var(--durazno); padding: 4px 16px; border-radius: 20px; display: inline-block; }
+.portada { width: 100%; max-height: 380px; object-fit: cover; border-radius: 14px; border: 6px solid var(--vino); }
+.comentario { background: var(--durazno); border-radius: 12px; padding: 10px 14px; margin: 10px 0; }
+.comentario p { margin: 4px 0; }
+
+/* ----- Perfil ----- */
+.perfil-grid { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; justify-content: center; }
+.card-perfil { background: var(--beige); padding: 22px 26px; border-radius: 14px; flex: 1; min-width: 280px; max-width: 520px; }
+.avatar { width: 120px; height: 120px; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+
+/* ----- Mensajes ----- */
+.msg, .alert { padding: 10px 16px; border-radius: 10px; margin: 0 auto 14px; max-width: 560px; }
+.msg.ok, .alert.success { background: #e9f3e4; color: #2d5a1f !important; }
+.msg.error, .alert.error { background: #fbe0e0; color: #8a1c1c !important; }
+
+/* ----- Pie de página ----- */
+.footer { background: var(--vino); color: var(--durazno); text-align: center; padding: 22px 16px; font-size: .9rem; }
+.footer p { margin: 2px 0; }
+.footer .chico { font-size: .75rem; opacity: .8; }
+
+/* ----- Botón volver arriba ----- */
+#btn-top { position: fixed; right: 20px; bottom: 20px; width: 44px; height: 44px; border-radius: 50%; font-size: 1.3rem; padding: 0;
+           background: var(--vino); color: var(--durazno); opacity: 0; pointer-events: none; transition: opacity .25s; }
+#btn-top.visible { opacity: 1; pointer-events: auto; }
+
+@media (max-width: 600px) { .navbar { padding: 10px 14px; } h2 { font-size: 1.6rem; } }
+
+/* ----- Logo (bigote) ----- */
+.navbar .brand { display: flex; align-items: center; gap: 10px; }
+.logo { height: 30px; width: auto; }
