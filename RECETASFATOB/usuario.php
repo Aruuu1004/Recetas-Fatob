@@ -19,6 +19,7 @@ $usuarios = $stmt->fetchAll();
     <title>CRUD de Usuarios - RECETAS FATOB</title>
     <!-- Se corrige la ruta de estilos -->
     <link rel="stylesheet" href="styles/general.css">
+    <?php include "views/favicon.php"; ?>
 </head>
 <body>
 

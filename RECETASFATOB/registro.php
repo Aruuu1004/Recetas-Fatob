@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Registro - RECETAS FATOB</title>
     <link rel="stylesheet" href="styles/general.css">
+    <?php include "views/favicon.php"; ?>
 
 </head>
 <body>
@@ -18,6 +19,8 @@
                 <?php
                     if ($_GET['error'] === 'campos_incompletos') echo "Completá todos los campos requeridos.";
                     if ($_GET['error'] === 'email_existente') echo "El correo electrónico ya está registrado.";
+                    if ($_GET['error'] === 'contrasenas_no_coinciden') echo "Las contraseñas no coinciden.";
+                    if ($_GET['error'] === 'contrasena_corta') echo "La contraseña debe tener al menos 8 caracteres.";
                     if ($_GET['error'] === 'error_servidor') echo "Ocurrió un error en el servidor, intentalo más tarde.";
                 ?>
             </div>
@@ -40,6 +43,11 @@
             </div>
 
             <div class="form-group">
+                <label for="confirmar_contrasena">Verificar contraseña:</label>
+                <input type="password" id="confirmar_contrasena" name="confirmar_contrasena" minlength="8" placeholder="Repetí la contraseña" required>
+            </div>
+
+            <div class="form-group">
                 <label>Restricciones Alimentarias / Preferencias:</label>
                 <label class="check"><input type="checkbox" name="restricciones[]" value="1"> Celiaco</label>
                 <label class="check"><input type="checkbox" name="restricciones[]" value="2"> Intolerante a la Lactosa</label>
@@ -52,6 +60,19 @@
     </main>
 
     <?php include "views/footer.php"; ?>
+
+    <script>
+    // Avisa en el momento si las dos contraseñas no coinciden
+    (function () {
+        var p1 = document.getElementById('contrasena');
+        var p2 = document.getElementById('confirmar_contrasena');
+        function chequear() {
+            p2.setCustomValidity(p2.value && p1.value !== p2.value ? 'Las contraseñas no coinciden' : '');
+        }
+        p1.addEventListener('input', chequear);
+        p2.addEventListener('input', chequear);
+    })();
+    </script>
 
 </body>
 </html>

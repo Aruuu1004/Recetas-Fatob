@@ -19,6 +19,7 @@ $sql .= " GROUP BY r.id_receta, u.nombre ORDER BY r.fecha_creacion DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $recetas = $stmt->fetchAll();
+$misFavoritas = ids_favoritas($pdo);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -27,6 +28,7 @@ $recetas = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Recetas - RECETAS FATOB</title>
     <link rel="stylesheet" href="styles/general.css">
+    <?php include "views/favicon.php"; ?>
 </head>
 <body>
     <?php include "views/navbar.php"; ?>

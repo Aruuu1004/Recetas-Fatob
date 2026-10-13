@@ -87,8 +87,8 @@ button.chico { padding: 3px 12px; font-size: .85rem; }
 .msg.error, .alert.error { background: #fbe0e0; color: #8a1c1c !important; }
 
 /* ----- Pie de página ----- */
-.footer { background: var(--vino); color: var(--durazno); text-align: center; padding: 22px 16px; font-size: .9rem; }
-.footer p { margin: 2px 0; }
+.footer { background: var(--vino); color: var(--durazno); text-align: center; padding: 28px 16px; font-size: .9rem; }
+.footer p { margin: 7px 0; }
 .footer .chico { font-size: .75rem; opacity: .8; }
 
 /* ----- Botón volver arriba ----- */
@@ -101,3 +101,73 @@ button.chico { padding: 3px 12px; font-size: .85rem; }
 /* ----- Logo (bigote) ----- */
 .navbar .brand { display: flex; align-items: center; gap: 10px; }
 .logo { height: 30px; width: auto; }
+
+/* ----- Avatar con foto ----- */
+.avatar { overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ----- Favoritas ----- */
+.card { position: relative; }
+.fav-form { position: absolute; top: 18px; right: 18px; margin: 0; }
+.fav-btn { width: 36px; height: 36px; padding: 0; border-radius: 50%; background: rgba(255, 221, 207, .95); color: var(--vino); font-size: 1.25rem; line-height: 1; }
+.fav-btn:hover { background: var(--vino); color: var(--durazno); }
+
+.favoritas { background: var(--taupe); border-radius: 14px; padding: 18px 20px 22px; margin-top: 28px; }
+.favoritas h3 { text-align: center; font-size: 1.6rem; margin: 0 0 14px; }
+.fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.fav-card { background: var(--beige); border-radius: 10px; padding: 10px; text-align: center; }
+.fav-card img, .fav-card .sin-imagen { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; display: block; font-size: 2rem; }
+.fav-card h4 { margin: 8px 0 4px; font-size: .95rem; color: var(--vino-osc); }
+.fav-vacio { text-align: center; margin: 0; color: var(--vino-osc); }
+
+/* ----- Pie de página: contacto e íconos ----- */
+.footer-contenido { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; max-width: 1100px; margin: 0 auto; }
+.footer-texto { text-align: center; }
+.footer a { color: var(--durazno); }
+.footer-mail { display: inline-flex; align-items: center; gap: 9px; text-decoration: underline; }
+.footer-mail .ico { width: 20px; height: 20px; }
+.footer-redes { justify-self: end; display: flex; gap: 20px; }
+.footer-redes a { display: inline-flex; color: #111; }  /* íconos oscuros, como en el diseño */
+.footer-mail .ico { color: #111; }
+.footer-redes svg { width: 28px; height: 28px; }
+.footer-redes a:hover { opacity: .75; }
+@media (max-width: 700px) {
+    .footer-contenido { grid-template-columns: 1fr; }
+    .footer-contenido > span { display: none; }
+    .footer-redes { justify-self: center; }
+}
+
+/* ----- Carousel (fotos de la receta y recetas favoritas) ----- */
+.carousel { position: relative; }
+.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
+.carousel-track::-webkit-scrollbar { display: none; }
+.carousel-item { flex: 0 0 100%; scroll-snap-align: start; }
+.carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 36px; height: 36px; padding: 0;
+                border-radius: 50%; background: var(--vino); color: var(--durazno); font-size: 1.5rem; line-height: 1; }
+.carousel-prev { left: 8px; }
+.carousel-next { right: 8px; }
+.carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+.carousel-dots span { width: 9px; height: 9px; border-radius: 50%; background: var(--beige-osc); cursor: pointer; }
+.carousel-dots span.activo { background: var(--vino); }
+.carousel-sin-scroll .carousel-btn, .carousel-sin-scroll .carousel-dots { display: none; }
+
+/* Fotos de la receta */
+.galeria { position: relative; border: 6px solid var(--vino); border-radius: 14px; overflow: hidden; }
+.galeria .carousel-item img { width: 100%; height: 360px; object-fit: cover; display: block; }
+
+/* Recetas favoritas: 4 tarjetas en compu, 3 en tablet, 2 en celular */
+.fav-carousel { padding: 0 26px; }
+.fav-carousel .carousel-track { gap: 14px; }
+.fav-carousel .carousel-item { flex: 0 0 calc((100% - 42px) / 4); }
+.fav-carousel .carousel-prev { left: 0; }
+.fav-carousel .carousel-next { right: 0; }
+@media (max-width: 900px) { .fav-carousel .carousel-item { flex-basis: calc((100% - 28px) / 3); } }
+@media (max-width: 600px) {
+    .fav-carousel .carousel-item { flex-basis: calc((100% - 14px) / 2); }
+    .galeria .carousel-item img { height: 240px; }
+}
+
+/* Formulario de receta: fotos ya subidas */
+.fotos-actuales { display: flex; flex-wrap: wrap; gap: 12px; }
+.foto-actual { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.ayuda { color: #6b4a4a; }

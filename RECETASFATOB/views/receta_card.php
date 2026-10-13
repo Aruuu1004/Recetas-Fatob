@@ -1,5 +1,12 @@
 <?php /* Tarjeta de receta. Espera la variable $r con los datos de la receta. */ ?>
 <article class="card">
+    <?php if (logueado()): $esFav = in_array((int)$r['id_receta'], $misFavoritas ?? [], true); ?>
+        <form class="fav-form" action="favoritoController.php" method="POST">
+            <input type="hidden" name="id_receta" value="<?= (int)$r['id_receta'] ?>">
+            <button type="submit" class="fav-btn" title="<?= $esFav ? 'Quitar de favoritas' : 'Agregar a favoritas' ?>"
+                    aria-label="<?= $esFav ? 'Quitar de favoritas' : 'Agregar a favoritas' ?>"><?= $esFav ? '♥' : '♡' ?></button>
+        </form>
+    <?php endif; ?>
     <?php if (!empty($r['imagen'])): ?>
         <img src="img/recetas/<?= e($r['imagen']) ?>" alt="<?= e($r['titulo']) ?>">
     <?php else: ?>

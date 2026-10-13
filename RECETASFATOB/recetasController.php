@@ -25,21 +25,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $accion === 'crear') {
         header("Location: receta_form.php?error=campos_incompletos");
         exit;
     }
-    $imagen = subir_imagen($_FILES['imagen'] ?? null);
-    if ($imagen === false) {
+    if (contar_subidas($_FILES['imagenes'] ?? null) > MAX_FOTOS_RECETA) {
+        header("Location: receta_form.php?error=demasiadas_imagenes");
+        exit;
+    }
+    $nuevas = subir_imagenes($_FILES['imagenes'] ?? null);
+    if ($nuevas === false) {
         header("Location: receta_form.php?error=imagen_invalida");
         exit;
     }
     try {
+        $pdo->beginTransaction();
+        // RECETA.imagen guarda la primera foto: es la portada que se ve en las tarjetas
         $stmt = $pdo->prepare("INSERT INTO RECETA (id_usuario, titulo, descripcion, ingredientes, instrucciones, tiempo_preparacion, imagen)
                                VALUES (:u, :t, :d, :i, :ins, :tp, :img)");
         $stmt->execute([
             ':u' => $_SESSION['id_usuario'], ':t' => $d['titulo'], ':d' => $d['descripcion'],
-            ':i' => $d['ingredientes'], ':ins' => $d['instrucciones'], ':tp' => $d['tiempo'], ':img' => $imagen,
+            ':i' => $d['ingredientes'], ':ins' => $d['instrucciones'], ':tp' => $d['tiempo'], ':img' => $nuevas[0] ?? null,
         ]);
-        header("Location: receta_detalle.php?id=" . $pdo->lastInsertId());
+        $idNueva = $pdo->lastInsertId();
+        $ins = $pdo->prepare("INSERT INTO RECETA_IMAGEN (id_receta, archivo, orden) VALUES (:r, :a, :o)");
+        foreach ($nuevas as $orden => $archivo) {
+            $ins->execute([':r' => $idNueva, ':a' => $archivo, ':o' => $orden]);
+        }
+        $pdo->commit();
+        header("Location: receta_detalle.php?id=" . $idNueva);
     } catch (PDOException $e) {
-        borrar_imagen($imagen);
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        foreach ($nuevas as $n) borrar_imagen($n);
         header("Location: receta_form.php?error=error_servidor");
     }
     exit;
@@ -63,23 +76,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $accion === 'editar') {
         header("Location: receta_form.php?id=$id&error=campos_incompletos");
         exit;
     }
-    $imagen = subir_imagen($_FILES['imagen'] ?? null);
-    if ($imagen === false) {
+
+    // Fotos actuales, cuáles se quitan y cuántas se suman (el total no puede pasar el máximo)
+    $fotos  = imagenes_receta($pdo, $receta, true);
+    $idsAct = array_map('intval', array_column($fotos, 'id'));
+    $quitar = array_values(array_intersect(array_map('intval', (array)($_POST['quitar'] ?? [])), $idsAct));
+    $quedan = count($fotos) - count($quitar);
+    if ($quedan + contar_subidas($_FILES['imagenes'] ?? null) > MAX_FOTOS_RECETA) {
+        header("Location: receta_form.php?id=$id&error=demasiadas_imagenes");
+        exit;
+    }
+    $nuevas = subir_imagenes($_FILES['imagenes'] ?? null);
+    if ($nuevas === false) {
         header("Location: receta_form.php?id=$id&error=imagen_invalida");
         exit;
     }
+
     try {
-        $stmt = $pdo->prepare("UPDATE RECETA SET titulo=:t, descripcion=:d, ingredientes=:i, instrucciones=:ins,
-                               tiempo_preparacion=:tp, imagen=:img WHERE id_receta=:id");
-        $stmt->execute([
-            ':t' => $d['titulo'], ':d' => $d['descripcion'], ':i' => $d['ingredientes'],
-            ':ins' => $d['instrucciones'], ':tp' => $d['tiempo'],
-            ':img' => $imagen ?? $receta['imagen'], ':id' => $id,
-        ]);
-        if ($imagen !== null) borrar_imagen($receta['imagen']);
+        $pdo->beginTransaction();
+        $pdo->prepare("UPDATE RECETA SET titulo=:t, descripcion=:d, ingredientes=:i, instrucciones=:ins, tiempo_preparacion=:tp
+                       WHERE id_receta=:id")
+            ->execute([':t' => $d['titulo'], ':d' => $d['descripcion'], ':i' => $d['ingredientes'],
+                       ':ins' => $d['instrucciones'], ':tp' => $d['tiempo'], ':id' => $id]);
+
+        $archivosQuitados = [];
+        $del = $pdo->prepare("DELETE FROM RECETA_IMAGEN WHERE id_imagen = :i AND id_receta = :r");
+        foreach ($fotos as $ft) {
+            if (in_array((int)$ft['id'], $quitar, true)) {
+                $del->execute([':i' => $ft['id'], ':r' => $id]);
+                $archivosQuitados[] = $ft['archivo'];
+            }
+        }
+
+        $stmtOrden = $pdo->prepare("SELECT COALESCE(MAX(orden), -1) + 1 FROM RECETA_IMAGEN WHERE id_receta = :r");
+        $stmtOrden->execute([':r' => $id]);
+        $orden = (int)$stmtOrden->fetchColumn();
+        $ins = $pdo->prepare("INSERT INTO RECETA_IMAGEN (id_receta, archivo, orden) VALUES (:r, :a, :o)");
+        foreach ($nuevas as $archivo) {
+            $ins->execute([':r' => $id, ':a' => $archivo, ':o' => $orden++]);
+        }
+
+        // La portada de las tarjetas es la primera foto que quede
+        $stmtPortada = $pdo->prepare("SELECT archivo FROM RECETA_IMAGEN WHERE id_receta = :r ORDER BY orden, id_imagen LIMIT 1");
+        $stmtPortada->execute([':r' => $id]);
+        $portada = $stmtPortada->fetchColumn() ?: null;
+        $pdo->prepare("UPDATE RECETA SET imagen = :img WHERE id_receta = :id")->execute([':img' => $portada, ':id' => $id]);
+
+        $pdo->commit();
+        foreach ($archivosQuitados as $a) borrar_imagen($a);
         header("Location: receta_detalle.php?id=$id&msg=editada");
     } catch (PDOException $e) {
-        borrar_imagen($imagen);
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        foreach ($nuevas as $n) borrar_imagen($n);
         header("Location: receta_form.php?id=$id&error=error_servidor");
     }
     exit;
@@ -94,8 +142,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $accion === 'eliminar') {
     $stmt->execute([':id' => $id]);
     $receta = $stmt->fetch();
     if ($receta && puede_editar($receta['id_usuario'])) {
+        // Se juntan los archivos antes de borrar (las filas de RECETA_IMAGEN se borran solas con la receta)
+        $archivos = array_column(imagenes_receta($pdo, $receta), 'archivo');
+        if (!empty($receta['imagen'])) $archivos[] = $receta['imagen'];
         $pdo->prepare("DELETE FROM RECETA WHERE id_receta = :id")->execute([':id' => $id]);
-        borrar_imagen($receta['imagen']);
+        foreach (array_unique($archivos) as $a) borrar_imagen($a);
         header("Location: recetas.php?msg=eliminada");
     } else {
         header("Location: recetas.php");

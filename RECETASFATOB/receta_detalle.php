@@ -39,6 +39,7 @@ $ingredientes = array_filter(array_map('trim', preg_split('/\R/', $r['ingredient
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($r['titulo']) ?> - RECETAS FATOB</title>
     <link rel="stylesheet" href="styles/general.css">
+    <?php include "views/favicon.php"; ?>
 </head>
 <body>
     <?php include "views/navbar.php"; ?>
@@ -53,11 +54,30 @@ $ingredientes = array_filter(array_map('trim', preg_split('/\R/', $r['ingredient
             <span class="stars"><?= estrellas($r['promedio']) ?></span>
             <?= number_format($r['promedio'], 1) ?> (<?= (int)$r['votos'] ?> votos)</p>
 
-        <?php if ($r['imagen']): ?>
-            <img class="portada" src="img/recetas/<?= e($r['imagen']) ?>" alt="<?= e($r['titulo']) ?>">
+        <?php $fotos = imagenes_receta($pdo, $r); ?>
+        <?php if ($fotos): ?>
+            <div class="carousel">
+                <div class="galeria">
+                    <div class="carousel-track">
+                        <?php foreach ($fotos as $ft): ?>
+                            <div class="carousel-item"><img src="img/recetas/<?= e($ft['archivo']) ?>" alt="<?= e($r['titulo']) ?>"></div>
+                        <?php endforeach; ?>
+                    </div>
+                    <button type="button" class="carousel-btn carousel-prev" aria-label="Foto anterior">&#8249;</button>
+                    <button type="button" class="carousel-btn carousel-next" aria-label="Foto siguiente">&#8250;</button>
+                </div>
+                <div class="carousel-dots"></div>
+            </div>
         <?php endif; ?>
 
         <p><?= e($r['descripcion']) ?></p>
+
+        <?php if (logueado()): $esFav = es_favorita($pdo, $r['id_receta']); ?>
+            <form action="favoritoController.php" method="POST" style="margin: 10px 0;">
+                <input type="hidden" name="id_receta" value="<?= (int)$r['id_receta'] ?>">
+                <button type="submit"><?= $esFav ? '♥ En mis favoritas' : '♡ Agregar a favoritas' ?></button>
+            </form>
+        <?php endif; ?>
 
         <?php if (puede_editar($r['id_usuario'])): ?>
             <div class="acciones">

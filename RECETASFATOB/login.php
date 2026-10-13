@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Iniciar Sesión - RECETAS FATOB</title>
     <link rel="stylesheet" href="styles/general.css">
+    <?php include "views/favicon.php"; ?>
 
 </head>
 <body>
@@ -47,7 +48,7 @@
                 <input type="password" id="contrasena" name="contrasena" required>
             </div>
 
-            <button type="submit" class="btn">Ingresar</button>
+            <button type="submit" class="btn">Iniciar Sesión</button>
         </form>
     </main>
 

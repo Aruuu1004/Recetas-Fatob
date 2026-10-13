@@ -86,3 +86,30 @@ CREATE TABLE IF NOT EXISTS CALIFICACION (
     FOREIGN KEY (id_receta) REFERENCES RECETA(id_receta) ON DELETE CASCADE,
     FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS seguidores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    seguidor_id INT NOT NULL,
+    seguido_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_follow (seguidor_id, seguido_id)
+);
+
+-- Recetas favoritas (una fila por usuario y receta)
+CREATE TABLE IF NOT EXISTS FAVORITO (
+    id_usuario INT NOT NULL,
+    id_receta INT NOT NULL,
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_usuario, id_receta),
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_receta) REFERENCES RECETA(id_receta) ON DELETE CASCADE
+);
+
+-- Fotos de cada receta (una fila por foto; "orden" define el orden del carousel)
+CREATE TABLE IF NOT EXISTS RECETA_IMAGEN (
+    id_imagen INT AUTO_INCREMENT PRIMARY KEY,
+    id_receta INT NOT NULL,
+    archivo VARCHAR(255) NOT NULL,
+    orden INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (id_receta) REFERENCES RECETA(id_receta) ON DELETE CASCADE
+);

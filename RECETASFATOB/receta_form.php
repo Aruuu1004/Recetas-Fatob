@@ -16,9 +16,11 @@ if ($id > 0) {
     }
 }
 $editando = $receta !== null;
+$fotos = $editando ? imagenes_receta($pdo, $receta, true) : [];
 $errores = [
     'campos_incompletos' => 'Completá todos los campos obligatorios.',
-    'imagen_invalida'    => 'La imagen no es válida (JPG, PNG, WEBP o GIF, máximo 2 MB).',
+    'imagen_invalida'    => 'Alguna imagen no es válida (JPG, PNG, WEBP o GIF, máximo 2 MB cada una).',
+    'demasiadas_imagenes' => 'Podés tener hasta ' . MAX_FOTOS_RECETA . ' fotos por receta.',
     'error_servidor'     => 'Ocurrió un error al guardar. Intentá de nuevo.',
 ];
 ?>
@@ -29,6 +31,7 @@ $errores = [
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $editando ? 'Editar' : 'Nueva' ?> receta - RECETAS FATOB</title>
     <link rel="stylesheet" href="styles/general.css">
+    <?php include "views/favicon.php"; ?>
 </head>
 <body>
     <?php include "views/navbar.php"; ?>
@@ -60,16 +63,50 @@ $errores = [
             <label for="tiempo_preparacion">Tiempo de preparación (minutos)</label>
             <input type="number" id="tiempo_preparacion" name="tiempo_preparacion" min="1" required value="<?= e($receta['tiempo_preparacion'] ?? '') ?>">
 
-            <label for="imagen">Imagen (opcional)</label>
-            <?php if ($editando && $receta['imagen']): ?>
-                <img class="mini" src="img/recetas/<?= e($receta['imagen']) ?>" alt="Imagen actual">
+            <label for="imagenes">Fotos (opcional, hasta <?= MAX_FOTOS_RECETA ?>)</label>
+            <?php if ($fotos): ?>
+                <div class="fotos-actuales">
+                    <?php foreach ($fotos as $ft): ?>
+                        <div class="foto-actual">
+                            <img class="mini" src="img/recetas/<?= e($ft['archivo']) ?>" alt="Foto actual">
+                            <label class="check"><input type="checkbox" name="quitar[]" value="<?= (int)$ft['id'] ?>"> Quitar</label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
-            <input type="file" id="imagen" name="imagen" accept="image/*">
+            <input type="file" id="imagenes" name="imagenes[]" accept="image/*" multiple>
+            <small class="ayuda">Podés elegir varias a la vez. JPG, PNG, WEBP o GIF, máximo 2 MB cada una.</small>
 
             <button type="submit"><?= $editando ? 'Guardar cambios' : 'Publicar receta' ?></button>
         </form>
     </main>
 
     <?php include "views/footer.php"; ?>
+
+    <script>
+    // Avisa antes de enviar si hay demasiadas fotos o alguna pesa más de 2 MB
+    (function () {
+        var form = document.querySelector('form.formulario');
+        var input = document.getElementById('imagenes');
+        var max = <?= MAX_FOTOS_RECETA ?>;
+        var actuales = <?= count($fotos) ?>;
+        form.addEventListener('submit', function (ev) {
+            var quitadas = form.querySelectorAll('input[name="quitar[]"]:checked').length;
+            var nuevas = input.files.length;
+            if (actuales - quitadas + nuevas > max) {
+                alert('Podés tener hasta ' + max + ' fotos por receta.');
+                ev.preventDefault();
+                return;
+            }
+            for (var i = 0; i < nuevas; i++) {
+                if (input.files[i].size > 2 * 1024 * 1024) {
+                    alert('La foto "' + input.files[i].name + '" pesa más de 2 MB.');
+                    ev.preventDefault();
+                    return;
+                }
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
