@@ -228,8 +228,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $accion === 'editar') {
 // ==========================================
 // 4. ELIMINAR USUARIO (DELETE)
 // ==========================================
-if ($accion === 'eliminar') {
-    $id_usuario = (int)($_GET['id'] ?? 0);
+if ($_SERVER["REQUEST_METHOD"] === "POST" && $accion === 'eliminar') {
+    $id_usuario = (int)($_POST['id_usuario'] ?? 0);
+
+    // Un admin no puede eliminarse a sí mismo (se quedaría sin acceso)
+    if ($id_usuario === (int)$_SESSION['id_usuario']) {
+        header("Location: usuario.php?error=autoeliminacion");
+        exit;
+    }
 
     if ($id_usuario > 0) {
         try {

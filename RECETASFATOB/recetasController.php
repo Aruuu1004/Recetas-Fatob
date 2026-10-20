@@ -147,7 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $accion === 'eliminar') {
         if (!empty($receta['imagen'])) $archivos[] = $receta['imagen'];
         $pdo->prepare("DELETE FROM RECETA WHERE id_receta = :id")->execute([':id' => $id]);
         foreach (array_unique($archivos) as $a) borrar_imagen($a);
-        header("Location: recetas.php?msg=eliminada");
+        $volver = (($_POST['volver'] ?? '') === 'admin' && es_admin()) ? 'admin_recetas.php' : 'recetas.php';
+        header("Location: $volver?msg=eliminada");
     } else {
         header("Location: recetas.php");
     }

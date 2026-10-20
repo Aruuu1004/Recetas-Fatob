@@ -30,7 +30,7 @@ $errores = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $editando ? 'Editar' : 'Nueva' ?> receta - RECETAS FATOB</title>
-    <link rel="stylesheet" href="styles/general.css">
+    <link rel="stylesheet" href="styles/general.css?v=5">
     <?php include "views/favicon.php"; ?>
 </head>
 <body>

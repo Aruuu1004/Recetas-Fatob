@@ -8,11 +8,21 @@ $accion   = $_GET['accion'] ?? '';
 $idReceta = (int)($_POST['id_receta'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $accion === 'crear') {
-    $texto = trim($_POST['texto'] ?? '');
-    if ($idReceta > 0 && $texto !== '') {
+    $texto      = trim($_POST['texto'] ?? '');
+    $puntuacion = (int)($_POST['puntuacion'] ?? 0);
+    if ($idReceta > 0) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO COMENTARIO (id_receta, id_usuario, texto) VALUES (:r, :u, :t)");
-            $stmt->execute([':r' => $idReceta, ':u' => $_SESSION['id_usuario'], ':t' => mb_substr($texto, 0, 1000)]);
+            if ($texto !== '') {
+                $stmt = $pdo->prepare("INSERT INTO COMENTARIO (id_receta, id_usuario, texto) VALUES (:r, :u, :t)");
+                $stmt->execute([':r' => $idReceta, ':u' => $_SESSION['id_usuario'], ':t' => mb_substr($texto, 0, 1000)]);
+            }
+            // El formulario del detalle también manda la calificación (1 a 5): una sola nota por usuario y receta
+            if ($puntuacion >= 1 && $puntuacion <= 5) {
+                $stmt = $pdo->prepare("INSERT INTO CALIFICACION (id_receta, id_usuario, puntuacion)
+                                       VALUES (:r, :u, :p)
+                                       ON DUPLICATE KEY UPDATE puntuacion = VALUES(puntuacion)");
+                $stmt->execute([':r' => $idReceta, ':u' => $_SESSION['id_usuario'], ':p' => $puntuacion]);
+            }
         } catch (PDOException $e) {
         }
     }

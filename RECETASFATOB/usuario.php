@@ -1,14 +1,14 @@
 <?php
 session_start();
 require_once "includes/config.php";
+require_once "includes/helpers.php";
 
 // Solo el administrador (rol 1) puede gestionar usuarios
-if (!isset($_SESSION['id_usuario']) || (int)($_SESSION['id_rol'] ?? 0) !== 1) {
+if (!es_admin()) {
     header("Location: login.php?error=acceso_denegado");
     exit;
 }
 
-// Cambiar "rol" por "ROLES" y "usuario" por "USUARIO"
 $stmt = $pdo->query("SELECT u.*, r.nombre AS rol_nombre FROM USUARIO u JOIN ROLES r ON u.id_rol = r.id_rol ORDER BY u.id_usuario DESC");
 $usuarios = $stmt->fetchAll();
 ?>
@@ -16,74 +16,83 @@ $usuarios = $stmt->fetchAll();
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>CRUD de Usuarios - RECETAS FATOB</title>
-    <!-- Se corrige la ruta de estilos -->
-    <link rel="stylesheet" href="styles/general.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestión de usuarios - RECETAS FATOB</title>
+    <link rel="stylesheet" href="styles/general.css?v=5">
     <?php include "views/favicon.php"; ?>
 </head>
 <body>
-
     <?php include "views/navbar.php"; ?>
 
     <main class="container">
-        <h2>Gestión de Usuarios (CRUD)</h2>
+        <div class="admin-encabezado">
+            <h2>Gestión de usuarios</h2>
+            <a class="boton" href="registro.php">+ Agregar usuario</a>
+        </div>
 
-        <?php if (isset($_GET['msg']) && $_GET['msg'] === 'editado'): ?>
-            <p style="color: green;">Usuario actualizado con éxito.</p>
+        <?php if (($_GET['msg'] ?? '') === 'editado'): ?>
+            <p class="msg ok">Usuario actualizado con éxito.</p>
+        <?php endif; ?>
+        <?php if (($_GET['msg'] ?? '') === 'eliminado'): ?>
+            <p class="msg ok">Usuario eliminado correctamente.</p>
+        <?php endif; ?>
+        <?php if (($_GET['error'] ?? '') === 'autoeliminacion'): ?>
+            <p class="msg error">No podés eliminar tu propia cuenta desde acá.</p>
+        <?php elseif (isset($_GET['error'])): ?>
+            <p class="msg error">Ocurrió un error. Intentá de nuevo.</p>
         <?php endif; ?>
 
-        <?php if (isset($_GET['msg']) && $_GET['msg'] === 'eliminado'): ?>
-            <p style="color: red;">Usuario eliminado correctamente.</p>
-        <?php endif; ?>
-
-        <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="background-color: #f2f2f2;">
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Rol</th>
-                    <th>Fecha Registro</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($usuarios as $u): ?>
+        <div class="tabla-scroll">
+            <table class="tabla-admin">
+                <thead>
                     <tr>
-                        <!-- Se corrige el action apuntando a usuarioController.php en la raíz -->
-                        <form action="usuarioController.php?accion=editar" method="POST">
-                            <td>
-                                <?php echo $u['id_usuario']; ?>
-                                <input type="hidden" name="id_usuario" value="<?php echo $u['id_usuario']; ?>">
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Registro</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($usuarios as $u): $id = (int)$u['id_usuario']; ?>
+                        <tr>
+                            <td data-label="ID">
+                                <?= $id ?>
+                                <!-- Formulario de edición: los campos de la fila lo enlazan con form="..." -->
+                                <form id="editar-<?= $id ?>" action="usuarioController.php?accion=editar" method="POST">
+                                    <input type="hidden" name="id_usuario" value="<?= $id ?>">
+                                </form>
                             </td>
-                            <td>
-                                <input type="text" name="nombre" value="<?php echo htmlspecialchars($u['nombre']); ?>" required>
+                            <td data-label="Nombre">
+                                <input form="editar-<?= $id ?>" type="text" name="nombre" value="<?= e($u['nombre']) ?>" required>
                             </td>
-                            <td>
-                                <input type="email" name="email" value="<?php echo htmlspecialchars($u['email']); ?>" required>
+                            <td data-label="Email">
+                                <input form="editar-<?= $id ?>" type="email" name="email" value="<?= e($u['email']) ?>" required>
                             </td>
-                            <td>
-                                <select name="id_rol">
-                                    <option value="1" <?php echo ($u['id_rol'] == 1) ? 'selected' : ''; ?>>Administrador</option>
-                                    <option value="2" <?php echo ($u['id_rol'] == 2) ? 'selected' : ''; ?>>Usuario</option>
+                            <td data-label="Rol">
+                                <select form="editar-<?= $id ?>" name="id_rol">
+                                    <option value="1" <?= $u['id_rol'] == 1 ? 'selected' : '' ?>>Administrador</option>
+                                    <option value="2" <?= $u['id_rol'] == 2 ? 'selected' : '' ?>>Usuario</option>
                                 </select>
                             </td>
-                            <td><?php echo $u['fecha_registro']; ?></td>
-                            <td>
-                                <button type="submit">Guardar</button>
-                                <!-- Se corrige el enlace de eliminación apuntando a usuarioController.php en la raíz -->
-                                <a href="usuarioController.php?accion=eliminar&id=<?php echo $u['id_usuario']; ?>"
-                                   onclick="return confirm('¿Seguro que querés eliminar este usuario?');"
-                                   style="color: red; margin-left: 10px;">Eliminar</a>
+                            <td data-label="Registro"><?= e($u['fecha_registro']) ?></td>
+                            <td data-label="Acciones" class="acciones">
+                                <button form="editar-<?= $id ?>" type="submit" class="btn-editar">Guardar</button>
+                                <?php if ($id !== (int)$_SESSION['id_usuario']): ?>
+                                    <form action="usuarioController.php?accion=eliminar" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este usuario?');">
+                                        <input type="hidden" name="id_usuario" value="<?= $id ?>">
+                                        <button type="submit" class="btn-eliminar">Eliminar</button>
+                                    </form>
+                                <?php endif; ?>
                             </td>
-                        </form>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </main>
 
     <?php include "views/footer.php"; ?>
-
 </body>
 </html>

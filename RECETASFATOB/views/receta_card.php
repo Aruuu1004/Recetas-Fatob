@@ -7,16 +7,19 @@
                     aria-label="<?= $esFav ? 'Quitar de favoritas' : 'Agregar a favoritas' ?>"><?= $esFav ? '♥' : '♡' ?></button>
         </form>
     <?php endif; ?>
-    <?php if (!empty($r['imagen'])): ?>
-        <img src="img/recetas/<?= e($r['imagen']) ?>" alt="<?= e($r['titulo']) ?>">
-    <?php else: ?>
-        <div class="sin-imagen">🍽️</div>
-    <?php endif; ?>
+    <a class="card-img" href="receta_detalle.php?id=<?= (int)$r['id_receta'] ?>" tabindex="-1" aria-hidden="true">
+        <?php if (!empty($r['imagen'])): ?>
+            <img src="img/recetas/<?= e($r['imagen']) ?>" alt="" loading="lazy">
+        <?php else: ?>
+            <div class="sin-imagen">🍽️</div>
+        <?php endif; ?>
+    </a>
     <div class="card-body">
         <h3><a href="receta_detalle.php?id=<?= (int)$r['id_receta'] ?>"><?= e($r['titulo']) ?></a></h3>
-        <p class="meta">Por <?= e($r['autor']) ?> · ⏱ <?= (int)$r['tiempo_preparacion'] ?> min</p>
-        <p class="stars"><?= estrellas($r['promedio']) ?> <small>(<?= (int)$r['votos'] ?>)</small></p>
-        <p><?= e(mb_strimwidth($r['descripcion'], 0, 100, '…')) ?></p>
-        <a class="ver-mas" href="receta_detalle.php?id=<?= (int)$r['id_receta'] ?>">Ver más</a>
+        <div class="card-datos">
+            <span><?= icono_reloj() ?> <?= (int)$r['tiempo_preparacion'] ?> min</span>
+            <span><?= icono_estrella() ?> <?= number_format($r['promedio'], 1) ?> (<?= (int)$r['votos'] ?>)</span>
+        </div>
+        <a class="ver-mas" href="receta_detalle.php?id=<?= (int)$r['id_receta'] ?>">Ver receta</a>
     </div>
 </article>

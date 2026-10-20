@@ -27,23 +27,32 @@ $misFavoritas = ids_favoritas($pdo);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Recetas - RECETAS FATOB</title>
-    <link rel="stylesheet" href="styles/general.css">
+    <link rel="stylesheet" href="styles/general.css?v=5">
     <?php include "views/favicon.php"; ?>
 </head>
 <body>
     <?php include "views/navbar.php"; ?>
 
     <main class="container">
-        <h2><?= $q !== '' ? 'Resultados para "' . e($q) . '"' : 'Todas las recetas' ?></h2>
+        <div class="listado-cab">
+            <h2><?= $q !== '' ? 'Resultados para "' . e($q) . '"' : 'Todas las recetas' ?></h2>
+            <div class="busca">
+                <form class="busca-form" action="recetas.php" method="GET" role="search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+                    <input type="search" name="q" value="<?= e($q) ?>" placeholder="Buscar recetas, ingredientes o categorías..." aria-label="Buscar recetas">
+                    <button type="submit">Buscar</button>
+                </form>
+            </div>
+        </div>
 
         <?php if (isset($_GET['msg']) && $_GET['msg'] === 'eliminada'): ?>
             <p class="msg ok">Receta eliminada correctamente.</p>
         <?php endif; ?>
 
         <?php if (!$recetas): ?>
-            <p>No se encontraron recetas.</p>
+            <p class="vacio-msg">No se encontraron recetas<?= $q !== '' ? ' con esa búsqueda. Probá con otra palabra o <a href="recetas.php"><strong>mirá todas las recetas</strong></a>' : '' ?>.</p>
         <?php else: ?>
-            <div class="grid">
+            <div class="grid grid-4">
                 <?php foreach ($recetas as $r) include "views/receta_card.php"; ?>
             </div>
         <?php endif; ?>

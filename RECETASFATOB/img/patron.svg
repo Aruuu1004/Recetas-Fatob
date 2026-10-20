@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360">
+<g fill="none" stroke="#c9967f" stroke-opacity=".38" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- gorro de chef -->
+  <g transform="translate(34 30) rotate(-12)"><path d="M6 34h30v8H6z"/><path d="M8 34c-8-2-9-14-1-17 1-8 12-11 16-5 5-5 15-2 14 6 8 3 5 15-3 16"/></g>
+  <!-- batidor -->
+  <g transform="translate(150 24) rotate(28)"><path d="M20 0v22"/><path d="M20 22c-13 4-13 30 0 34 13-4 13-30 0-34z"/><path d="M20 22c-5 8-5 26 0 34M20 22c5 8 5 26 0 34"/></g>
+  <!-- tomate -->
+  <g transform="translate(262 34) rotate(10)"><circle cx="22" cy="28" r="18"/><path d="M12 14l10 6 10-6M22 20v-9"/></g>
+  <!-- cuchara -->
+  <g transform="translate(30 130) rotate(40)"><ellipse cx="12" cy="12" rx="9" ry="12"/><path d="M12 24v36"/></g>
+  <!-- zanahoria -->
+  <g transform="translate(108 118) rotate(-35)"><path d="M10 14c10-6 26 0 34 20L56 62C34 58 12 44 6 24z" transform="scale(.8)"/><path d="M12 12l-6-9M16 10l2-10M20 14l8-8"/></g>
+  <!-- hoja -->
+  <g transform="translate(214 128) rotate(20)"><path d="M4 40C4 14 22 2 44 4c2 24-10 42-40 36z"/><path d="M4 40L32 14"/></g>
+  <!-- olla -->
+  <g transform="translate(290 122) rotate(-8)"><path d="M4 18h46v22a10 10 0 0 1-10 10H14A10 10 0 0 1 4 40z"/><path d="M0 18h54M18 10h18M2 26H-6M52 26h8"/></g>
+  <!-- tenedor -->
+  <g transform="translate(40 232) rotate(-28)"><path d="M4 0v18c0 6 4 8 8 8s8-2 8-8V0M12 0v26M12 26v34"/></g>
+  <!-- huevo -->
+  <g transform="translate(118 226) rotate(14)"><path d="M20 2C8 2 2 20 2 32c0 12 8 18 18 18s18-6 18-18C38 20 32 2 20 2z"/></g>
+  <!-- pimiento -->
+  <g transform="translate(196 230) rotate(-14)"><path d="M10 14c-8 4-8 24 0 32 6 6 22 6 28 0 8-8 8-28 0-32-5-3-9-1-14 1-5-2-9-4-14-1z"/><path d="M24 15c0-6 2-10 8-12"/></g>
+  <!-- rodillo -->
+  <g transform="translate(274 232) rotate(30)"><rect x="8" y="10" width="40" height="16" rx="4"/><path d="M0 18h8M48 18h8"/></g>
+  <!-- chiles/hojas pequeñas -->
+  <g transform="translate(90 318) rotate(8)"><path d="M0 14C6 2 20-2 32 4 28 16 14 22 0 14z"/><path d="M0 14L24 9"/></g>
+  <g transform="translate(236 316) rotate(-20)"><circle cx="10" cy="10" r="9"/><circle cx="32" cy="14" r="9"/><path d="M10 1c0-6 6-8 10-6M32 5c0-6 6-8 10-6"/></g>
+  <g transform="translate(330 300) rotate(15)"><path d="M0 0l14 24M14 0L0 24"/></g>
+  <g transform="translate(16 330)"><path d="M0 8l8-8 8 8-8 8z"/></g>
+</g>
+</svg>
