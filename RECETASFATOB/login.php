@@ -21,6 +21,10 @@
                 <div class="alert success">¡Cuenta creada con éxito! Ya podés ingresar.</div>
             <?php endif; ?>
 
+            <?php if (isset($_GET['contrasena']) && $_GET['contrasena'] === 'restablecida'): ?>
+                <div class="alert success">Contraseña actualizada. Ya podés iniciar sesión.</div>
+            <?php endif; ?>
+
             <?php if (isset($_GET['logout']) && $_GET['logout'] === 'exito'): ?>
                 <div class="alert success">Sesión cerrada correctamente.</div>
             <?php endif; ?>
@@ -50,7 +54,7 @@
                 <button type="submit" class="btn">Iniciar Sesión</button>
             </form>
 
-            <a class="auth-olvido" href="mailto:estudios.ariadna@gmail.com?subject=Recuperar%20mi%20contrase%C3%B1a%20-%20RECETAS%20FATOB">¿Olvidaste tu contraseña?</a>
+            <a class="auth-olvido" href="recuperar.php">¿Olvidaste tu contraseña?</a>
             <p class="auth-pie">¿No tenés cuenta? <a href="registro.php">Registrate</a></p>
         </section>
     </main>

@@ -113,3 +113,15 @@ CREATE TABLE IF NOT EXISTS RECETA_IMAGEN (
     orden INT NOT NULL DEFAULT 0,
     FOREIGN KEY (id_receta) REFERENCES RECETA(id_receta) ON DELETE CASCADE
 );
+
+-- Códigos de 6 dígitos para recuperar contraseña (se guarda solo el hash; vale 10 minutos y 5 intentos)
+CREATE TABLE IF NOT EXISTS CODIGO_RECUPERACION (
+    id_codigo INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    codigo_hash VARCHAR(255) NOT NULL,
+    expira DATETIME NOT NULL,
+    intentos TINYINT NOT NULL DEFAULT 0,
+    usado TINYINT(1) NOT NULL DEFAULT 0,
+    creado DATETIME NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
+);

@@ -166,6 +166,7 @@ $icoCorazon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
                         <label for="email">Correo electrónico</label>
                         <input type="email" id="email" name="email" required value="<?= htmlspecialchars($usuario['email']) ?>">
 
+                        <p><a href="cambiar_contrasena.php">Cambiar contraseña (pide la contraseña actual)</a></p>
                         <label for="contrasena_nueva">Nueva contraseña (dejala vacía para no cambiarla)</label>
                         <input type="password" id="contrasena_nueva" name="contrasena_nueva" minlength="8" placeholder="Mínimo 8 caracteres">
 
